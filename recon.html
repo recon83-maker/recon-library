@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Recon Library</title>
+<title>Recon Library - Local Build</title>
 <style>
   :root {
     --primary-blue: #0077ff;
@@ -21,19 +21,20 @@
     overflow-x: hidden;
   }
 
+  /* Audio Control */
   #muteBtn {
     position: fixed; bottom: 20px; right: 20px; z-index: 2000;
     background: rgba(0, 0, 0, 0.7); border: 1px solid var(--primary-blue);
     color: var(--primary-blue); padding: 10px 15px; cursor: pointer;
     text-transform: uppercase; font-size: 0.7rem; font-weight: bold;
-    letter-spacing: 2px; box-shadow: 0 0 10px rgba(0, 119, 255, 0.3);
-    display: none;
+    letter-spacing: 2px; display: none;
   }
 
+  /* Launcher */
   #launcherView {
     height: 100vh; display: flex; flex-direction: column;
     justify-content: center; align-items: center; cursor: pointer;
-    text-align: center;
+    text-align: center; background: #000;
   }
 
   .entry-text {
@@ -47,6 +48,7 @@
     50% { opacity: 1; text-shadow: 0 0 20px var(--primary-blue); }
   }
 
+  /* Library Grid */
   #libraryView { display: none; padding: 20px; min-height: 100vh; }
   header { text-align: center; padding: 10px 0; }
   h1 { font-size: 2.8rem; text-transform: uppercase; letter-spacing: 6px; color: #fff; text-shadow: 0 0 15px rgba(0, 119, 255, 0.7); margin: 0; }
@@ -61,10 +63,11 @@
   .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; max-width: 1200px; margin: 20px auto; }
   .book-card { background: var(--card-bg); border: 1px solid #222; border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
   .book-card:hover { border-color: var(--primary-blue); transform: translateY(-8px); }
-  .book-cover { width: 100%; height: 380px; object-fit: cover; }
+  .book-cover { width: 100%; height: 380px; object-fit: cover; background: #222; }
   .book-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
   .btn-read { width: 100%; background: transparent; border: 2px solid var(--primary-blue); color: #fff; padding: 10px 0; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: auto; }
 
+  /* Reader */
   #readerView { display: none; height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000; background: var(--dark-bg); }
   .nav-bar { height: 60px; background: #111; display: flex; align-items: center; padding: 0 20px; border-bottom: 2px solid var(--primary-blue); }
   iframe { width: 100%; height: calc(100vh - 62px); border: none; }
@@ -81,7 +84,7 @@
 
   <div id="launcherView" onclick="showLibrary()">
     <div class="entry-text">SYSTEM READY</div>
-    <p style="color: #555; letter-spacing: 2px; text-transform: uppercase; margin-top: 15px;">Click to Access Archives</p>
+    <p style="color: #555; letter-spacing: 2px; text-transform: uppercase; margin-top: 15px;">Accessing Local Archives</p>
   </div>
 
   <div id="libraryView">
@@ -100,35 +103,51 @@
 
     <section class="book-grid" id="libraryGrid">
       
-      <div class="book-card" data-category="manga">
-        <img src="A1lXZz7VI1L.webp" class="book-cover" alt="Jujutsu Kaisen 30 in 1">
+      <div class="book-card" data-category="books">
+        <img src="slacker.jpg" class="book-cover">
         <div class="book-info">
-          <h2 style="font-size: 0.9rem; color: #fff; text-transform: uppercase; margin-bottom: 15px; height: 2.5em; overflow: hidden;">Jujutsu Kaisen 30 in 1</h2>
-          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/220e3b3699.html', 'Jujutsu Kaisen 30 in 1')">Read Now</button>
+          <h2 style="font-size: 0.9rem; color: #fff;">Slacker</h2>
+          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/fadff3383f.html', 'Slacker')">Read Now</button>
         </div>
       </div>
 
       <div class="book-card" data-category="comics">
-        <img src="066AC2E78E8A7A8DAB9DD2F4722402BA46105AEA.jpeg" class="book-cover" alt="Invincible Compendium One">
+        <img src="starwars2.webp" class="book-cover">
         <div class="book-info">
-          <h2 style="font-size: 0.9rem; color: #fff; text-transform: uppercase; margin-bottom: 15px; height: 2.5em; overflow: hidden;">Invincible: Compendium One</h2>
-          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/93cb65af18.html', 'Invincible: One')">Read Now</button>
+          <h2 style="font-size: 0.9rem; color: #fff;">Rise of the Sith Vol. 2</h2>
+          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/6abc4647df.html', 'Rise of the Sith Vol. 2')">Read Now</button>
+        </div>
+      </div>
+
+      <div class="book-card" data-category="manga">
+        <img src="https://m.media-amazon.com/images/I/81S8As9xrML.jpg" class="book-cover">
+        <div class="book-info">
+          <h2 style="font-size: 0.9rem; color: #fff;">Jujutsu Kaisen 30 in 1</h2>
+          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/220e3b3699.html', 'Jujutsu Kaisen')">Read Now</button>
+        </div>
+      </div>
+
+      <div class="book-card" data-category="comics">
+        <img src="https://m.media-amazon.com/images/I/915uS6S8p5L.jpg" class="book-cover">
+        <div class="book-info">
+          <h2 style="font-size: 0.9rem; color: #fff;">Invincible: Compendium One</h2>
+          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/93cb65af18.html', 'Invincible Vol 1')">Read Now</button>
         </div>
       </div>
 
       <div class="book-card" data-category="comics">
         <img src="https://m.media-amazon.com/images/I/71sGkh+82DL.jpg" class="book-cover">
         <div class="book-info">
-          <h2 style="font-size: 0.9rem; color: #fff; text-transform: uppercase; margin-bottom: 15px; height: 2.5em; overflow: hidden;">Invincible: Compendium Two</h2>
-          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/68ac957f68.html', 'Invincible: Two')">Read Now</button>
+          <h2 style="font-size: 0.9rem; color: #fff;">Invincible: Compendium Two</h2>
+          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/68ac957f68.html', 'Invincible Vol 2')">Read Now</button>
         </div>
       </div>
 
       <div class="book-card" data-category="comics">
         <img src="https://m.media-amazon.com/images/I/71KppFunS-L.jpg" class="book-cover">
         <div class="book-info">
-          <h2 style="font-size: 0.9rem; color: #fff; text-transform: uppercase; margin-bottom: 15px; height: 2.5em; overflow: hidden;">Invincible: Compendium Three</h2>
-          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/29861c9076.html', 'Invincible: Three')">Read Now</button>
+          <h2 style="font-size: 0.9rem; color: #fff;">Invincible: Compendium Three</h2>
+          <button class="btn-read" onclick="openReader('https://heyzine.com/flip-book/29861c9076.html', 'Invincible Vol 3')">Read Now</button>
         </div>
       </div>
 
@@ -137,10 +156,10 @@
 
   <div id="readerView">
     <div class="nav-bar">
-      <button onclick="closeReader()" style="background:transparent; border:1px solid var(--primary-blue); color:#fff; padding:8px 15px; cursor:pointer; font-weight: bold; text-transform: uppercase;">← BACK</button>
-      <span id="topNavTitle" style="margin-left:20px; color:#fff; text-transform:uppercase; letter-spacing:1px;"></span>
+      <button onclick="closeReader()" style="background:transparent; border:1px solid var(--primary-blue); color:#fff; padding:8px 15px; cursor:pointer;">&larr; BACK</button>
+      <span id="topNavTitle" style="margin-left:20px; color:#fff; text-transform:uppercase;"></span>
     </div>
-    <iframe id="comicReader" src="" allowfullscreen="allowfullscreen" allow="clipboard-write"></iframe>
+    <iframe id="comicReader" src=""></iframe>
   </div>
 
   <script>
@@ -151,12 +170,11 @@
       document.getElementById('launcherView').style.display = 'none';
       document.getElementById('libraryView').style.display = 'block';
       muteBtn.style.display = 'block';
-      music.volume = 1.0; 
-      music.play().catch(e => { console.log("Audio requires interaction."); });
+      music.volume = 0.4;
+      music.play().catch(() => { console.log("User must interact with page first"); });
     }
 
     function toggleMute() {
-      if (music.paused) { music.play(); muteBtn.innerText = "MUTE AUDIO"; return; }
       music.muted = !music.muted;
       muteBtn.innerText = music.muted ? "UNMUTE AUDIO" : "MUTE AUDIO";
     }

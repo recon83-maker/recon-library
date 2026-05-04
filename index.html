@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RECON SYSTEM | UTILITIES</title>
+<style>
+  :root {
+    --primary-blue: #00d2ff;
+    --secondary-blue: #0077ff;
+    --dark-bg: #000000;
+    --card-bg: #141418;
+    --text-color: #e0e0e0;
+    --glow: 0 0 15px rgba(0, 210, 255, 0.4);
+    --border: #1a1a1a;
+  }
+
+  body, html {
+    margin: 0; padding: 0;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    height: 100vh; width: 100%;
+    overflow: hidden;
+  }
+
+  /* --- TRANSITION --- */
+  #transition-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: black; z-index: 9000;
+    display: none; justify-content: center; align-items: center;
+    flex-direction: column; text-align: center;
+  }
+
+  .video-text {
+    color: #fff; font-weight: 400; text-transform: uppercase;
+    letter-spacing: 12px; font-size: 3.5rem; opacity: 0;
+    position: absolute; width: 100%;
+  }
+
+  @keyframes videoFade {
+    0% { opacity: 0; transform: translateY(10px); }
+    20% { opacity: 1; transform: translateY(0); }
+    80% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+  .animate-video { animation: videoFade 2.2s ease-in-out forwards; }
+
+  /* --- STEALTH UI --- */
+  #stealth-content { transition: opacity 1s ease; height: 100%; display: flex; flex-direction: column; }
+  #main-nav { 
+    width: 100%; background: #080808; padding: 15px 0; 
+    display: flex; justify-content: center; gap: 20px; 
+    border-bottom: 1px solid var(--border); 
+  }
+  .nav-btn { 
+    background: transparent; border: 1px solid #333; color: #555; 
+    padding: 10px 25px; text-transform: uppercase; font-weight: bold; 
+    letter-spacing: 2px; cursor: pointer; transition: 0.3s; border-radius: 4px; 
+  }
+  .nav-btn.active { border-color: var(--secondary-blue); color: var(--secondary-blue); box-shadow: 0 0 10px rgba(0, 119, 255, 0.2); }
+
+  .view-container { display: none; width: 100%; flex-grow: 1; justify-content: center; flex-direction: column; align-items: center; }
+  .view-container.active { display: flex; }
+
+  /* --- CALCULATOR --- */
+  .calculator-window { width: 320px; background-color: #111; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+  .calculator-topbar { height: 100px; padding: 10px 15px; position: relative; background: #000; }
+  #calculator-display { position: absolute; bottom: 10px; right: 15px; font-size: 3rem; font-weight: 300; color: #fff; }
+  .calculator-buttons { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--border); gap: 1px; }
+  .calculator-buttons button { background-color: #111; color: #fff; border: none; height: 65px; font-size: 1.4rem; cursor: pointer; }
+  .btn-accent { color: var(--secondary-blue) !important; font-weight: bold; }
+
+  /* --- PIN PAD --- */
+  #pin-display { font-size: 2.5rem; letter-spacing: 15px; color: var(--secondary-blue); height: 50px; margin-bottom: 20px; text-align: center;}
+  .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 25px; background: #080808; border-radius: 20px; border: 1px solid var(--border); }
+  .pin-btn { width: 75px; height: 75px; border-radius: 50%; background: #111; border: 1px solid #222; color: #fff; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
+  .pin-btn:hover { border-color: var(--secondary-blue); background: #151515; }
+
+  /* --- SECRET HOME --- */
+  #home-page { display: none; opacity: 0; transition: opacity 1s ease; height: 100%; width: 100%; text-align: center; padding-top: 40px; overflow-y: auto; }
+  .secret-title { font-size: 1.8rem; text-transform: uppercase; letter-spacing: 6px; color: #0044ff; border: 2px solid #0044ff; display: inline-block; padding: 10px 30px; border-radius: 8px; margin-bottom: 30px; font-weight: 900; }
+  .secret-nav { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 10px auto; max-width: 800px; }
+  .s-btn { background: #0a0a0a; border: 1px solid var(--border); color: #888; padding: 15px 25px; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; cursor: pointer; transition: 0.3s; width: 160px; }
+  .s-btn:hover { border-color: var(--primary-blue); color: white; background: #111; }
+
+  /* --- GRID SYSTEM --- */
+  .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
+  .item-card { background: #111; border: 1px solid #222; border-radius: 4px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column; }
+  .item-card:hover { border-color: var(--secondary-blue); transform: translateY(-5px); }
+  .item-cover { width: 100%; height: 300px; object-fit: cover; background: #222; }
+  .item-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+  .btn-action { width: 100%; background: transparent; border: 1px solid var(--secondary-blue); color: #fff; padding: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.7rem; margin-top: 10px; transition: 0.3s; letter-spacing: 1px; }
+  .btn-action:hover { background: var(--secondary-blue); color: #000; }
+
+  /* --- GAMES SECTION --- */
+  #games-section { display: none; width: 100%; height: 100%; background: #050505; position: absolute; top: 0; left: 0; z-index: 9500; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+  .section-header { text-align: center; letter-spacing: 5px; margin-bottom: 30px; text-transform: uppercase; color: #fff; }
+  
+  #game-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
+  .game-header { height: 50px; background: #111; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--secondary-blue); }
+  .game-frame-active { width: 100%; height: calc(100% - 50px); border: none; background: #000; }
+
+  /* --- LIBRARY SECTION --- */
+  #library-section { display: none; width: 100%; height: 100%; background: #050505; position: absolute; top: 0; left: 0; z-index: 9500; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+  #launcherView { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; text-align: center; }
+  .entry-text { color: var(--secondary-blue); text-transform: uppercase; letter-spacing: 5px; font-size: 2.2rem; animation: pulse 2s infinite; font-weight: bold; }
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; text-shadow: 0 0 20px var(--secondary-blue); } }
+  
+  .filter-btn { background: transparent; color: #888; border: 1px solid #333; padding: 10px 20px; cursor: pointer; text-transform: uppercase; font-size: 0.7rem; transition: 0.3s; }
+  .filter-btn.active { border-color: var(--secondary-blue); color: var(--secondary-blue); }
+  #bookSearch { width: 100%; max-width: 500px; background: #000; border: 1px solid #333; border-left: 4px solid var(--secondary-blue); padding: 12px; color: #fff; margin: 20px auto; display: block; }
+  
+  #reader-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
+  .reader-header { height: 50px; background: #111; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--secondary-blue); }
+  #reader-frame { width: 100%; height: calc(100% - 50px); border: none; }
+
+  .hidden { display: none !important; }
+  #muteBtn { position: fixed; bottom: 20px; right: 20px; z-index: 10000; background: rgba(0,0,0,0.8); border: 1px solid var(--primary-blue); color: var(--primary-blue); padding: 10px; cursor: pointer; border-radius: 5px; display: none; }
+</style>
+</head>
+<body>
+
+  <audio id="bgMusic" loop>
+    <source src="https://drive.google.com/uc?export=download&id=1RBO1Gxm6qX6NqZKwOOnZiNkFDmpR9Bgn" type="audio/mpeg">
+  </audio>
+
+  <button id="muteBtn" onclick="toggleMute()">MUTE AUDIO</button>
+
+  <div id="transition-overlay">
+    <h1 id="t1" class="video-text">WELCOME</h1>
+    <h1 id="t2" class="video-text">TO</h1>
+  </div>
+
+  <div id="stealth-content">
+    <div id="main-nav">
+      <button id="calc-nav" class="nav-btn active" onclick="switchView('calc', this)">Calculator</button>
+      <button id="code-nav" class="nav-btn" onclick="switchView('code', this)">???</button>
+    </div>
+    
+    <div id="calc-container" class="view-container active">
+        <div class="calculator-window">
+            <div class="calculator-topbar"><div id="calculator-display">0</div></div>
+            <div class="calculator-buttons">
+              <button onclick="clearDisplay()" style="color:#ff4444">AC</button><button onclick="toggleSign()">+/-</button><button onclick="calculatePercent()">%</button><button class="btn-accent" onclick="setOperation('÷')">÷</button>
+              <button onclick="appendNumber('7')">7</button><button onclick="appendNumber('8')">8</button><button onclick="appendNumber('9')">9</button><button class="btn-accent" onclick="setOperation('×')">×</button>
+              <button onclick="appendNumber('4')">4</button><button onclick="appendNumber('5')">5</button><button onclick="appendNumber('6')">6</button><button class="btn-accent" onclick="setOperation('−')">−</button>
+              <button onclick="appendNumber('1')">1</button><button onclick="appendNumber('2')">2</button><button onclick="appendNumber('3')">3</button><button class="btn-accent" onclick="setOperation('+')">+</button>
+              <button style="grid-column: span 2" onclick="appendNumber('0')">0</button><button onclick="appendComma()">.</button><button class="btn-accent" style="background:var(--secondary-blue) !important; color:white !important" onclick="compute()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="code-container" class="view-container">
+        <div id="pin-display"></div>
+        <div class="pin-grid">
+          <button class="pin-btn" onclick="pressKey('1')">1</button><button class="pin-btn" onclick="pressKey('2')">2</button><button class="pin-btn" onclick="pressKey('3')">3</button>
+          <button class="pin-btn" onclick="pressKey('4')">4</button><button class="pin-btn" onclick="pressKey('5')">5</button><button class="pin-btn" onclick="pressKey('6')">6</button>
+          <button class="pin-btn" onclick="pressKey('7')">7</button><button class="pin-btn" onclick="pressKey('8')">8</button><button class="pin-btn" onclick="pressKey('9')">9</button>
+          <button class="pin-btn" onclick="backspacePin()">←</button><button class="pin-btn" onclick="pressKey('0')">0</button><button class="pin-btn" onclick="submitPin()">✓</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="home-page">
+    <div class="secret-title">RECON SECRETS SITE</div>
+    <div class="secret-nav">
+      <button class="s-btn" onclick="openGamesSection()">Games</button>
+      <button class="s-btn">Retro Games</button>
+      <button class="s-btn" onclick="openLibrarySection()">Library</button>
+      <button class="s-btn">Browser</button>
+      <button class="s-btn" onclick="location.reload()">Lock</button>
+    </div>
+  </div>
+
+  <div id="games-section">
+      <button onclick="closeGamesSection()" style="position:fixed; top:20px; left:20px; background:transparent; border:1px solid #444; color:#888; padding:5px 15px; cursor:pointer; z-index:9600;">ESC</button>
+      <h1 class="section-header">GAMES</h1>
+      <section class="item-grid">
+          <div class="item-card">
+              <img src="fnaf.png" class="item-cover" style="object-position: top;">
+              <div class="item-info">
+                  <h2 style="font-size: 0.9rem; color: #fff; text-align: center;">Five Nights at Freddy's</h2>
+                  <button class="btn-action" onclick="launchGame('fnaf1-src', 'Five Nights at Freddy\'s')">PLAY</button>
+              </div>
+          </div>
+          <div class="item-card">
+              <img src="download_2.jpeg" class="item-cover" style="object-position: center;">
+              <div class="item-info">
+                  <h2 style="font-size: 0.9rem; color: #fff; text-align: center;">Five Nights at Freddy's 2</h2>
+                  <button class="btn-action" onclick="launchGame('fnaf2-src', 'Five Nights at Freddy\'s 2')">PLAY</button>
+              </div>
+          </div>
+          <div class="item-card">
+              <img src="download (1).jpeg" class="item-cover" style="object-position: center;">
+              <div class="item-info">
+                  <h2 style="font-size: 0.9rem; color: #fff; text-align: center;">Five Nights at Freddy's 3</h2>
+                  <button class="btn-action" onclick="launchGame('fnaf3-src', 'Five Nights at Freddy\'s 3')">PLAY</button>
+              </div>
+          </div>
+      </section>
+  </div>
+
+  <!-- GAME PLAYER OVERLAY -->
+  <div id="game-overlay">
+      <div class="game-header">
+          <button onclick="closeGame()" style="background:transparent; border:1px solid var(--secondary-blue); color:#fff; padding:5px 15px; cursor:pointer;">&larr; BACK</button>
+          <span id="game-title" style="margin-left:20px; font-size:0.8rem; letter-spacing:2px; color:#fff;"></span>
+      </div>
+      <!-- Frame is injected dynamically here -->
+  </div>
+
+  <!-- TEMPLATES -->
+  <template id="fnaf1-src">
+    <!DOCTYPE html><html><head><base href="https://cdn.jsdelivr.net/gh/genizy/fnaf@latest/1/"><link rel="stylesheet" href="style.css"/></head><body><canvas id="MMFCanvas" width="1280" height="720"></canvas><script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script><script src="main.js"></script></body></html>
+  </template>
+  <template id="fnaf2-src">
+    <!DOCTYPE html><html><head><base href="https://cdn.jsdelivr.net/gh/genizy/fnaf@latest/2/"><link rel="stylesheet" href="style.css"/></head><body><canvas id="MMFCanvas" width="1280" height="720"></canvas><script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script><script src="main.js"></script></body></html>
+  </template>
+  <template id="fnaf3-src">
+    <!DOCTYPE html><html><head><base href="https://cdn.jsdelivr.net/gh/genizy/fnaf@latest/3/"><link rel="stylesheet" href="style.css"/></head><body><canvas id="MMFCanvas" width="1280" height="720"></canvas><script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script><script src="main.js"></script></body></html>
+  </template>
+
+  <!-- LIBRARY SECTION -->
+  <div id="library-section">
+      <button onclick="closeLibrarySection()" style="position:fixed; top:20px; left:20px; background:transparent; border:1px solid #444; color:#888; padding:5px 15px; cursor:pointer; z-index:9600;">ESC</button>
+      <div id="launcherView" onclick="unlockLibraryInternal()"><div class="entry-text">SYSTEM READY</div></div>
+      <div id="libraryView" class="hidden">
+          <h1 class="section-header">RECON LIBRARY</h1>
+          <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="filter-btn active" onclick="filterCategory('all', this)">All</button>
+              <button class="filter-btn" onclick="filterCategory('books', this)">Books</button>
+              <button class="filter-btn" onclick="filterCategory('manga', this)">Manga</button>
+              <button class="filter-btn" onclick="filterCategory('comics', this)">Comics</button>
+          </div>
+          <input type="text" id="bookSearch" placeholder="SEARCHING ARCHIVES..." onkeyup="runFilters()">
+
+          <section class="item-grid">
+              <div class="item-card" data-category="books"><img src="slacker.jpg" class="item-cover"><div class="item-info"><h2 style="font-size: 0.8rem; color: #fff;">Slacker</h2><button class="btn-action" onclick="openReader('https://heyzine.com/flip-book/fadff3383f.html', 'Slacker')">Read</button></div></div>
+              <div class="item-card" data-category="comics"><img src="starwars2.webp" class="item-cover"><div class="item-info"><h2 style="font-size: 0.8rem; color: #fff;">Rise of the Sith Vol. 2</h2><button class="btn-action" onclick="openReader('https://heyzine.com/flip-book/6abc4647df.html', 'Rise of the Sith Vol. 2')">Read</button></div></div>
+              <div class="item-card" data-category="manga"><img src="https://m.media-amazon.com/images/I/81S8As9xrML.jpg" class="item-cover"><div class="item-info"><h2 style="font-size: 0.8rem; color: #fff;">Jujutsu Kaisen 30 in 1</h2><button class="btn-action" onclick="openReader('https://heyzine.com/flip-book/220e3b3699.html', 'Jujutsu Kaisen')">Read</button></div></div>
+              <div class="item-card" data-category="comics"><img src="https://m.media-amazon.com/images/I/915uS6S8p5L.jpg" class="item-cover"><div class="item-info"><h2 style="font-size: 0.8rem; color: #fff;">Invincible: Compendium One</h2><button class="btn-action" onclick="openReader('https://heyzine.com/flip-book/93cb65af18.html', 'Invincible Vol 1')">Read</button></div></div>
+              <div class="item-card" data-category="comics"><img src="https://m.media-amazon.com/images/I/71sGkh+82DL.jpg" class="item-cover"><div class="item-info"><h2 style="font-size: 0.8rem; color: #fff;">Invincible: Compendium Two</h2><button class="btn-action" onclick="openReader('https://heyzine.com/flip-book/68ac957f68.html', 'Invincible Vol 2')">Read</button></div></div>
+              <div class="item-card" data-category="comics"><img src="https://m.media-amazon.com/images/I/71KppFunS-L.jpg" class="item-cover"><div class="item-info"><h2 style="font-size: 0.8rem; color: #fff;">Invincible: Compendium Three</h2><button class="btn-action" onclick="openReader('https://heyzine.com/flip-book/29861c9076.html', 'Invincible Vol 3')">Read</button></div></div>
+          </section>
+      </div>
+  </div>
+
+  <!-- BOOK READER OVERLAY -->
+  <div id="reader-overlay">
+      <div class="reader-header">
+          <button onclick="closeReader()" style="background:transparent; border:1px solid var(--secondary-blue); color:#fff; padding:5px 15px; cursor:pointer;">&larr; BACK</button>
+          <span id="reader-title" style="margin-left:20px; font-size:0.8rem; letter-spacing:2px; color: #fff;"></span>
+      </div>
+      <iframe id="reader-frame" src="" allowfullscreen="true" allow="fullscreen"></iframe>
+  </div>
+
+  <script>
+    let activeView = 'calc';
+    let currentOperand = '0', previousOperand = null, operation = null, resetDisplay = false;
+    const calcDisplay = document.getElementById('calculator-display');
+
+    function updateCalcDisplay() { calcDisplay.innerText = currentOperand; }
+    function appendNumber(n) { if (resetDisplay) { currentOperand = ''; resetDisplay = false; } if (currentOperand === '0') currentOperand = n; else currentOperand += n; updateCalcDisplay(); }
+    function appendComma() { if (currentOperand.includes('.')) return; currentOperand += '.'; updateCalcDisplay(); }
+    function clearDisplay() { currentOperand = '0'; previousOperand = null; operation = null; updateCalcDisplay(); }
+    function setOperation(op) { if (operation !== null) compute(); previousOperand = currentOperand; operation = op; resetDisplay = true; }
+    function compute() { if (!previousOperand || !operation) return; let res; const p = parseFloat(previousOperand); const c = parseFloat(currentOperand); if (operation === '+') res = p + c; if (operation === '−' || operation === '-') res = p - c; if (operation === '×' || operation === '*') res = p * c; if (operation === '÷' || operation === '/') res = p / c; currentOperand = res.toString(); operation = null; resetDisplay = true; updateCalcDisplay(); }
+    function calculatePercent() { currentOperand = (parseFloat(currentOperand) / 100).toString(); updateCalcDisplay(); }
+    function toggleSign() { currentOperand = (parseFloat(currentOperand) * -1).toString(); updateCalcDisplay(); }
+
+    let enteredPin = "";
+    function pressKey(num) { if (enteredPin.length < 6) { enteredPin += num; updatePinDisplay(); } }
+    function backspacePin() { enteredPin = enteredPin.slice(0, -1); updatePinDisplay(); }
+    function updatePinDisplay() { document.getElementById('pin-display').innerText = "*".repeat(enteredPin.length); }
+    function submitPin() { if (enteredPin === "010813") startVideoUnlock(); else { enteredPin = ""; updatePinDisplay(); } }
+
+    function switchView(v, b) {
+      activeView = v;
+      document.querySelectorAll('.view-container').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active'); document.getElementById(v + '-container').classList.add('active');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (document.activeElement.id === 'bookSearch') return;
+        const key = e.key;
+        if (!isNaN(key) && key !== ' ') {
+            if (activeView === 'calc') appendNumber(key);
+            else if (activeView === 'code') pressKey(key);
+        }
+        if (key === 'Backspace') {
+            if (activeView === 'calc') {
+                currentOperand = currentOperand.length > 1 ? currentOperand.slice(0, -1) : '0';
+                updateCalcDisplay();
+            } else if (activeView === 'code') backspacePin();
+        }
+        if (key === 'Enter') {
+            if (activeView === 'calc') compute();
+            else if (activeView === 'code') submitPin();
+        }
+    });
+
+    function startVideoUnlock() {
+      document.getElementById('stealth-content').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('stealth-content').style.display = 'none';
+        const overlay = document.getElementById('transition-overlay');
+        overlay.style.display = 'flex';
+        setTimeout(() => document.getElementById('t1').classList.add('animate-video'), 100);
+        setTimeout(() => document.getElementById('t2').classList.add('animate-video'), 2400);
+        setTimeout(() => {
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            const home = document.getElementById('home-page');
+            home.style.display = 'block';
+            setTimeout(() => { home.style.opacity = '1'; }, 50);
+            document.getElementById('bgMusic').play().catch(() => {});
+            document.getElementById('muteBtn').style.display = 'block';
+          }, 800);
+        }, 5500);
+      }, 1000);
+    }
+
+    /* --- NUCLEAR RESET + MEMORY OPTIMIZED GAME LOGIC --- */
+    function openGamesSection() { document.getElementById('games-section').style.display = 'block'; }
+    function closeGamesSection() { document.getElementById('games-section').style.display = 'none'; }
+    
+    function launchGame(scriptId, title) {
+        const overlay = document.getElementById('game-overlay');
+        const template = document.getElementById(scriptId);
+        if (!template) return;
+
+        // 1. Force the old frame to dump memory before removing it
+        const oldFrame = document.getElementById('game-frame');
+        if (oldFrame) {
+            oldFrame.src = "about:blank"; 
+            oldFrame.remove();
+        }
+
+        // 2. Create the fresh iframe
+        const newFrame = document.createElement('iframe');
+        newFrame.id = 'game-frame';
+        newFrame.className = 'game-frame-active';
+        newFrame.allowFullscreen = true;
+        
+        overlay.appendChild(newFrame);
+        overlay.style.display = 'block';
+        document.getElementById('game-title').innerText = title;
+
+        // 3. Longer delay (200ms) to prevent the "Initialization Freeze"
+        setTimeout(() => {
+            const doc = newFrame.contentWindow.document;
+            doc.open();
+            doc.write(template.innerHTML);
+            doc.close();
+        }, 200); 
+
+        document.getElementById('bgMusic').pause();
+    }
+
+    function closeGame() {
+        const overlay = document.getElementById('game-overlay');
+        const frame = document.getElementById('game-frame');
+        
+        overlay.style.display = 'none';
+        
+        // Completely destroy the frame so it can't hang in the background
+        if (frame) {
+            frame.src = "about:blank";
+            frame.remove();
+        }
+        
+        if (!document.getElementById('bgMusic').muted) {
+            document.getElementById('bgMusic').play().catch(()=>{});
+        }
+    }
+
+    /* --- LIBRARY LOGIC --- */
+    function openLibrarySection() { document.getElementById('library-section').style.display = 'block'; }
+    function closeLibrarySection() { document.getElementById('library-section').style.display = 'none'; }
+    function unlockLibraryInternal() {
+        document.getElementById('launcherView').classList.add('hidden');
+        document.getElementById('libraryView').classList.remove('hidden');
+    }
+    function filterCategory(category, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.item-card[data-category]').forEach(card => {
+            const cat = card.getAttribute('data-category');
+            card.classList.toggle('hidden', category !== 'all' && cat !== category);
+        });
+    }
+    function runFilters() {
+        let search = document.getElementById('bookSearch').value.toLowerCase();
+        document.querySelectorAll('.item-card[data-category]').forEach(card => {
+            let title = card.querySelector('h2').innerText.toLowerCase();
+            card.classList.toggle('hidden', !title.includes(search));
+        });
+    }
+    function openReader(url, title) {
+        document.getElementById('reader-overlay').style.display = 'block';
+        document.getElementById('reader-frame').src = url;
+        document.getElementById('reader-title').innerText = title;
+    }
+    function closeReader() {
+        document.getElementById('reader-overlay').style.display = 'none';
+        document.getElementById('reader-frame').src = "";
+    }
+
+    function toggleMute() { 
+        const music = document.getElementById('bgMusic');
+        music.muted = !music.muted; 
+        document.getElementById('muteBtn').innerText = music.muted ? "UNMUTE" : "MUTE AUDIO"; 
+        if(!music.muted) music.play().catch(()=>{});
+    }
+  </script>
+</body>
+</html>
